@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, url_for, Blueprint
 
 from api.models import db, User
 from api.utils import generate_sitemap, APIException
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 api = Blueprint('api', __name__)
 
 @api.route('/hello', methods=['POST', 'GET'])
@@ -18,15 +18,36 @@ def login():
     password = request.json.get("password")
     user = User.query.filter_by(email=email).first()
     print(email)
-    if user:
-        if password != user.password:
-            return jsonify({"msg": "contraseña invalida"}), 401
+    if not user:
+        return jsonify({"msg":"información incorrecta"})
     else:
-        return jsonify({"msg": "email invalida"}), 401
-    response_body = {
-        "mensage": "login"
-    }
-    return jsonify(response_body), 200 (editado) 
+        token = create_access_token(identity=user.id)  
+        response_body = {
+            "mensage": "login", "token":token
+        }
+        return jsonify(response_body), 200 
+
+@api.route('/register', methods=['POST'])
+def register():
+    email = request.json.get("email")
+    password = request.json.get("password")
+    user = User(email=email, password=password)
+    print(email)
+    if user:
+        db.session.add(user)
+        db.session.commit()
+        return jsonify({"user":user.serialize()})
+    else:
+        return jsonify({"msg":"usuario no creado"})
+@api.route('/private', methods=['GET'])
+@jwt_required()
+def private():
+    user_id=get_jwt_identity()
+    user=User.query.get(user_id)
+    if not user:
+        return jsonify({"msg":"inicie sesión", "loged":False})
+    else:
+        return jsonify({"loged":True, "user":user.serialize()})
 
 
 
