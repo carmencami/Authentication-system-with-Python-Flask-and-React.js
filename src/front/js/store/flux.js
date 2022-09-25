@@ -2,6 +2,7 @@ const getState = ({ getStore, getActions, setStore }) => {
   return {
     store: {
       message: null,
+      token: null,
       demo: [
         {
           title: "FIRST",
@@ -36,17 +37,45 @@ const getState = ({ getStore, getActions, setStore }) => {
       register: async (email, password) => {
         try {
           // fetching data from the backend
-          const resp = await fetch(process.env.BACKEND_URL + "/api/register", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: email, password: password }),
-          });
+          const resp = await fetch(
+            "https://3001-carmencami-authenticati-8mn8w826c9t.ws-eu67.gitpod.io" +
+              "/api/register",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email: email, password: password }),
+            }
+          );
           const data = await resp.json();
           // don't forget to return something, that is how the async resolves
           return data;
         } catch (error) {
           console.log("Error loading message from backend", error);
         }
+      },
+      login: async (email, password) => {
+        try {
+          // fetching data from the backend
+          const resp = await fetch(
+            "https://3001-carmencami-authenticati-8mn8w826c9t.ws-eu67.gitpod.io" +
+              "/api/login",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email: email, password: password }),
+            }
+          );
+          const data = await resp.json();
+          setStore({ token: data.token });
+          localStorage.setItem("token", data.token);
+          // don't forget to return something, that is how the async resolves
+          return data;
+        } catch (error) {
+          console.log("Error loading message from backend", error);
+        }
+      },
+      setToken: () => {
+        setStore({ token: localStorage.getItem("token") });
       },
       changeColor: (index, color) => {
         //get the store
