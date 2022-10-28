@@ -7,8 +7,8 @@ export const Register = () => {
   const [password, setPasword] = useState("");
 
   return (
-    <div className="container">
-      <div class="form-floating mb-3">
+    <form className="container justify-content-center form-group">
+      <div class="form-outline mb-4">
         <input
           type="email"
           value={email}
@@ -19,9 +19,8 @@ export const Register = () => {
           id="floatingInput"
           placeholder="name@example.com"
         />
-        <label for="floatingInput">Email address</label>
       </div>
-      <div class="form-floating">
+      <div class="form-outline mb-4">
         <input
           type="password"
           value={password}
@@ -32,7 +31,6 @@ export const Register = () => {
           id="floatingPassword"
           placeholder="Password"
         />
-        <label for="floatingPassword">Password</label>
       </div>
       <button
         class="btn btn-primary"
@@ -41,8 +39,8 @@ export const Register = () => {
           actions.register(email, password);
         }}
       >
-        Registrar
+        Sing in
       </button>
-    </div>
+    </form>
   );
 };
