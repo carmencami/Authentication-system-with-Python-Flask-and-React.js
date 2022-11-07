@@ -12,20 +12,24 @@ def handle_hello():
         "message": "Hello! I'm a message that came from the backend, check the network tab on the google inspector and you will see the GET request"
     }
     return jsonify(response_body), 200
-@api.route('/login', methods=['POST', 'GET'])
+@api.route('/login', methods=['POST'])
 def login():
-    email = request.json.get("email")
-    password = request.json.get("password")
-    user = User.query.filter_by(email=email).first()
-    print(email)
-    if not user:
-        return jsonify({"msg":"información incorrecta"})
-    else:
-        token = create_access_token(identity=user.id)  
-        response_body = {
-            "mensage": "login", "token":token
-        }
-        return jsonify(response_body), 200 
+    try:
+        email = request.json.get("email")
+        password = request.json.get("password")
+        user = User.query.filter_by(email=email).first()
+        print(email)
+        if not user:
+            return jsonify({"msg":"información incorrecta"})
+        else:
+            token = create_access_token(identity=user.email)  
+            print(token)
+            response_body = {
+                "mensage": "login", "token":token
+            }
+            return jsonify(response_body), 200 
+    except Exception as e:
+        return jsonify(e), 402
 
 @api.route('/register', methods=['POST'])
 def register():

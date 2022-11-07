@@ -49,26 +49,15 @@ const getState = ({ getStore, getActions, setStore }) => {
           console.log("Error loading message from backend", error);
         }
       },
-      login: async (email, password) => {
-        try {
-          // fetching data from the backend
-          const resp = await fetch(
-            "https://3001-carmencami-authenticati-8mn8w826c9t.ws-eu67.gitpod.io" +
-              "/api/login",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email: email, password: password }),
-            }
-          );
-          const data = await resp.json();
-          setStore({ token: data.token });
-          localStorage.setItem("token", data.token);
-          // don't forget to return something, that is how the async resolves
-          return data;
-        } catch (error) {
-          console.log("Error loading message from backend", error);
-        }
+      login: (email, password) => {
+        fetch(process.env.BACKEND_URL + "/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: email, password: password }),
+        })
+          .then((resp) => resp.json())
+          .then((data) => console.log(data))
+          .catch((error) => console.log(error));
       },
       setToken: () => {
         setStore({ token: localStorage.getItem("token") });
